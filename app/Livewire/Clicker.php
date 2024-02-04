@@ -6,9 +6,12 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Livewire\Attributes\Rule;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 class Clicker extends Component
 {
+    use WithPagination;
+
     #[Rule('required|min:2|max:50')]
     public $name;
 
@@ -25,19 +28,22 @@ class Clicker extends Component
         //     'email' => 'required|email|unique:users',
         //     'password' => 'required|min:5'
         // ]);
-        $this->validate();
+        $validated = $this->validate();
         User::create([
-            'name' => $this->name,
-            'email' => $this->email,
-            'password' => Hash::make($this->password)
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'password' => Hash::make($validated['password'])
         ]);
+
+        $this->reset(['name', 'email', 'password']);
+        session()->flash('message', 'User created successful.');
     }
 
     public function render()
     {
         return view('livewire.clicker', [
             'title' => 'User Component',
-            'users' => User::all(),
+            'users' => User::paginate(5),
         ]);
     }
 }
