@@ -30,6 +30,8 @@ class TodoList extends Component
         $this->reset('name');
 
         session()->flash('message', 'Created.');
+
+        $this->resetPage();
     }
 
     public function delete(Todo $todo)
