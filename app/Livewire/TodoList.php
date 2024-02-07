@@ -34,12 +34,13 @@ class TodoList extends Component
         $this->resetPage();
     }
 
-    public function delete(Todo $todo)
+    public function delete($id)
     {
-        $todo->delete();
-
-        session()->flash('message', 'Deleted.');
-
+        try {
+            Todo::findOrFail($id)->delete();
+        } catch (\Throwable $th) {
+            session()->flash('error', 'Failed deleteion todo.');
+        }
     }
 
     public function toggle(Todo $todo)
